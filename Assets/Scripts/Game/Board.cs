@@ -32,20 +32,16 @@ public class Board : MonoBehaviour
 	{
 		if (isClearCreateFallLoopRunning)
 			yield break; // Prevent s	tarting a new instance if one is already running.
-
+		Controller.busy = true;
 		isClearCreateFallLoopRunning = true; // Mark as running.
 		multiplier = 1f;
 		yield return new WaitForSeconds(Game.TweenDuration + 0.01f);
-		print("1");
 		do {
 			loopClearCreateFall = false;
-			print("2");
 			yield return CheckAndClearPokerHands();
 			yield return new WaitForSeconds(0.01f);
-			print("3");
 			yield return StartCoroutine(Fall());
 			yield return new WaitForSeconds(0.01f);
-			print("4");
 			yield return StartCoroutine(CreateAndFall());
 			yield return new WaitForSeconds(0.01f);
 		} while (loopClearCreateFall);
@@ -78,11 +74,11 @@ public class Board : MonoBehaviour
 						break;
 				}
 			}
-			if (droppedInARow)
+			if (droppedInARow) {
+				Sound.Singleton.Play("carddrop");
 				yield return new WaitForSeconds(Game.TweenDuration);
+			}
 		}
-		yield return new WaitForSeconds(Game.TweenDuration + 0.1f);
-
 	}
 	IEnumerator CreateAndFall()
 	{
@@ -99,13 +95,15 @@ public class Board : MonoBehaviour
 				}
 			}
 			if (hasCardToDropInRow)
+			{
+				Sound.Singleton.Play("carddrop");
 				yield return new WaitForSeconds(Game.TweenDuration);
+			}
 		}
 	}
 	float multiplier = 1f;	
 	public IEnumerator CheckAndClearPokerHands()
 	{
-		bool hasWaitedTime = false;
 		foreach (var logicFunction in Logic.logicFunctions)
 		{
 			HashSet<Transform> cardsToClear = new();
@@ -133,13 +131,15 @@ public class Board : MonoBehaviour
 			foreach (Transform c in cardsToClear)
 				c.GetComponent<Card>().Break();
 
-			if (cardsToClear.Count > 0) {
+			if (cardsToClear.Count > 0) { 
+				if (multiplier > 1)
+					Effects.Singleton.TextEffect($"{multiplier}X Multiplier!", new (cols / 2 * xGap, rows / 2 * yGap), Game.TweenDuration * 2.5f);
+				Sound.Singleton.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
 				yield return new WaitForSeconds(Game.TweenDuration * 2);
-				hasWaitedTime = true;
 			}
 		}
-		if (hasWaitedTime == false)
-			yield return new WaitForSeconds(Game.TweenDuration);
+		// if (hasWaitedTime == false)
+		// 	yield return new WaitForSeconds(Game.TweenDuration);
 		multiplier++;
 	}
     IEnumerator CreateBoard()

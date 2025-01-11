@@ -4,7 +4,6 @@ using UnityEngine;
 public class Joker : Card
 {
     private static HashSet<Transform> cardsBeingProcessed = new();
-
     public override void Break()
     {
         // Prevent processing the same card multiple times
@@ -39,13 +38,15 @@ public class Joker : Card
         }
 
         Effects.Singleton.TextEffect("Joker!", transform.position);
-		print("here");
-        Board.Singleton.StartClearCreateFallLoop();
-		print("here done");
-
+		Invoke(nameof(Delay), Game.TweenDuration + 0.1f);
         // Remove this card from the processing set after its effects are complete
         cardsBeingProcessed.Remove(transform);
 
         base.Break();
+		Sound.Singleton.Play("joker");
     }
+	protected void Delay()
+	{
+        Board.Singleton.StartClearCreateFallLoop();
+	}
 }
