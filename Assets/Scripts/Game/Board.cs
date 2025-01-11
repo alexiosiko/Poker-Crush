@@ -81,7 +81,7 @@ public class Board : MonoBehaviour
 			if (droppedInARow)
 				yield return new WaitForSeconds(Game.TweenDuration);
 		}
-		yield return new WaitForSeconds(Game.TweenDuration);
+		yield return new WaitForSeconds(Game.TweenDuration + 0.1f);
 
 	}
 	IEnumerator CreateAndFall()
@@ -105,6 +105,7 @@ public class Board : MonoBehaviour
 	float multiplier = 1f;	
 	public IEnumerator CheckAndClearPokerHands()
 	{
+		bool hasWaitedTime = false;
 		foreach (var logicFunction in Logic.logicFunctions)
 		{
 			HashSet<Transform> cardsToClear = new();
@@ -134,8 +135,11 @@ public class Board : MonoBehaviour
 
 			if (cardsToClear.Count > 0) {
 				yield return new WaitForSeconds(Game.TweenDuration * 2);
+				hasWaitedTime = true;
 			}
 		}
+		if (hasWaitedTime == false)
+			yield return new WaitForSeconds(Game.TweenDuration);
 		multiplier++;
 	}
     IEnumerator CreateBoard()

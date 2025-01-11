@@ -6,14 +6,6 @@ using Unity.Mathematics;
 
 public class Effects : MonoBehaviour
 {
-	public static Color[] colors = new Color[] {
-		Color.red,
-		Color.white,
-		Color.green,
-		Color.blue,
-		Color.yellow,
-	};
-
 	[SerializeField] GameObject textPrefab;
 	[SerializeField] GameObject textDestructivePrefab;
 	public void TextEffect(string text, Vector2 pos, float delay = 0f) => StartCoroutine(TextEffectCoroutine(text, pos, delay));
@@ -21,7 +13,6 @@ public class Effects : MonoBehaviour
 	{
 		yield return new WaitForSeconds(delay);
 		GameObject obj = Instantiate(textPrefab, new Vector3(pos.x, pos.y, -1), Quaternion.identity);
-		obj.GetComponentInChildren<TMP_Text>().color = colors[UnityEngine.Random.Range(0, colors.Length)];
 		obj.GetComponentInChildren<TMP_Text>().text = text;
 		obj.transform.DOScale(1, 1f);
 		obj.transform.DOShakeRotation(1, 30);

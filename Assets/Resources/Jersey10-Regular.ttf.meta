@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 82ec2e670e3515e45bb259a5b2a76c7e
+guid: 01abd2619bb450040a51a14f84cb3a37
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Sour Gummy
+  - Jersey 10
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
