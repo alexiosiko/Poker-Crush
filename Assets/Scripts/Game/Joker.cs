@@ -38,7 +38,7 @@ public class Joker : Card
         }
 
         Effects.Singleton.TextEffect("Joker!", transform.position);
-		Invoke(nameof(Delay), Game.TweenDuration + 0.1f);
+		Invoke(nameof(Delay), Game.TweenDuration + Game.TweenBuffer);
         // Remove this card from the processing set after its effects are complete
         cardsBeingProcessed.Remove(transform);
 

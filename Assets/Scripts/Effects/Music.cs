@@ -12,5 +12,9 @@ public class Music : MonoBehaviour
 		Invoke(nameof(Play), source.clip.length);
 	}
 	AudioSource source;
-	void Awake() => source = GetComponent<AudioSource>();
+	void Awake()
+	{
+		DontDestroyOnLoad(gameObject);
+		source = GetComponent<AudioSource>();
+	}
 }

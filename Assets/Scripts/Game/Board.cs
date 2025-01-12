@@ -8,7 +8,7 @@ public class Board : MonoBehaviour
     public static float xGap = 1f;
     public static float yGap = 1.39f;
     [SerializeField] GameObject[] cards;
-	readonly public static int rows = 4;
+	readonly public static int rows = 5;
 	readonly public static int cols = 5;
     void Start()
     {
@@ -34,16 +34,16 @@ public class Board : MonoBehaviour
 			yield break; // Prevent s	tarting a new instance if one is already running.
 		Controller.busy = true;
 		isClearCreateFallLoopRunning = true; // Mark as running.
-		multiplier = 1f;
-		yield return new WaitForSeconds(Game.TweenDuration + 0.01f);
+		multiplier = 1;
+		yield return new WaitForSeconds(Game.TweenDuration + 0.02f);
 		do {
 			loopClearCreateFall = false;
 			yield return CheckAndClearPokerHands();
-			yield return new WaitForSeconds(0.01f);
+			yield return new WaitForSeconds(0.02f);
 			yield return StartCoroutine(Fall());
-			yield return new WaitForSeconds(0.01f);
+			yield return new WaitForSeconds(0.02f);
 			yield return StartCoroutine(CreateAndFall());
-			yield return new WaitForSeconds(0.01f);
+			yield return new WaitForSeconds(0.02f);
 		} while (loopClearCreateFall);
 
 		Controller.busy = false;
@@ -76,7 +76,7 @@ public class Board : MonoBehaviour
 			}
 			if (droppedInARow) {
 				Sound.Singleton.Play("carddrop");
-				yield return new WaitForSeconds(Game.TweenDuration);
+				yield return new WaitForSeconds(Game.TweenDuration + Game.TweenBuffer);
 			}
 		}
 	}
@@ -97,11 +97,11 @@ public class Board : MonoBehaviour
 			if (hasCardToDropInRow)
 			{
 				Sound.Singleton.Play("carddrop");
-				yield return new WaitForSeconds(Game.TweenDuration);
+				yield return new WaitForSeconds(Game.TweenDuration + Game.TweenBuffer);
 			}
 		}
 	}
-	float multiplier = 1f;	
+	int multiplier = 1;	
 	public IEnumerator CheckAndClearPokerHands()
 	{
 		foreach (var logicFunction in Logic.logicFunctions)
@@ -116,15 +116,11 @@ public class Board : MonoBehaviour
 						continue;
 					if (logicFunction.function(card, Vector2.right, cardsToClear))
 					{
-						Game.Singleton.AddScore(logicFunction.score);
+						Game.Singleton.AddScore(logicFunction.score * multiplier);
 
 						
 						Effects.Singleton.TextEffect(logicFunction.name, new (card.position.x + logicFunction.centerOffset, card.position.y));
-						if (multiplier > 1)
-						{
-							Effects.Singleton.TextEffect($"{multiplier}X Multiplier!", new (cols / 2 * xGap, rows / 2 * yGap), Game.TweenDuration * 2.5f);
-							Game.Singleton.AddScore(logicFunction.score, Game.TweenDuration * 2.5f);
-						}
+
 					}
 				}
 			}
@@ -132,18 +128,20 @@ public class Board : MonoBehaviour
 				c.GetComponent<Card>().Break();
 
 			if (cardsToClear.Count > 0) { 
-				if (multiplier > 1)
-					Effects.Singleton.TextEffect($"{multiplier}X Multiplier!", new (cols / 2 * xGap, rows / 2 * yGap), Game.TweenDuration * 2.5f);
+				
 				Sound.Singleton.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
-				yield return new WaitForSeconds(Game.TweenDuration * 2);
+				yield return new WaitForSeconds(Game.TweenDuration * 2 + Game.TweenBuffer);
 			}
 		}
+		if (multiplier > 2)
+			Effects.Singleton.TextEffect($"{multiplier}X Multi!", new (cols / 2 * xGap, rows / 2 * yGap));
 		// if (hasWaitedTime == false)
 		// 	yield return new WaitForSeconds(Game.TweenDuration);
 		multiplier++;
 	}
     IEnumerator CreateBoard()
     {
+		Controller.busy = true;
         for (int x = 0; x < cols; x++)
         {
             for (int y = 0; y < rows; y++)
@@ -154,9 +152,11 @@ public class Board : MonoBehaviour
                 // Instantiate the card and set parent
                 GameObject card = Instantiate(cards[Random.Range(0, cards.Length)], new Vector2(-2, -2), Quaternion.identity, transform);
 				card.transform.DOMove(position, Game.TweenDuration);
-				yield return new WaitForSeconds(0.05f);
+				yield return new WaitForSeconds(0.1f);
             }
         }
+		yield return new WaitForSeconds(Game.TweenBuffer);
+		Controller.busy = false;
     }
 	Vector2 IndexToPos(int x, int y) => new(x * xGap, y * yGap);
 	public static Board Singleton;

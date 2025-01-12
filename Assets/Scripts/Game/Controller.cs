@@ -62,7 +62,7 @@ public class Controller : MonoBehaviour
 		Sound.Singleton.Play(new string[] {"move", "move1"});
 
 		Board.Singleton.StartClearCreateFallLoop();
-		Game.Singleton.RemoveScore(10);
+		Game.Singleton.RemoveScore(20);
 	}
 
 	void Click()
@@ -74,8 +74,10 @@ public class Controller : MonoBehaviour
 		if (busy)
 			return;
 		Card c = cardTransform.GetComponent<Card>();
-		if (c.suit == Suit.joker)
+		if (c.suit == Suit.joker) {
+			busy = true;
 			c.Break();
+		}
 
 	}
 	// IEnumerator Release()
