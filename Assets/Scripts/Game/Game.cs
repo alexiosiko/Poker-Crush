@@ -10,7 +10,7 @@ public class Game : MonoBehaviour
 	[SerializeField] GameObject menuObject;
 	[SerializeField] GameObject winObject;
 	public static float TweenDuration = 0.25f;
-	public static float TweenBuffer = 0.05f;
+	public static float TweenBuffer = 0.1f;
 	public List<Transform> highlighted;
 	public void AddScore(int score, float delay = 1f) => StartCoroutine(AddScoreIenumerator(score, delay));
 	IEnumerator AddScoreIenumerator(int score, float delay)
@@ -22,7 +22,6 @@ public class Game : MonoBehaviour
 	public void RemoveScore(int score) => StartCoroutine(RemoveScoreIEnumerator(score));
 	IEnumerator RemoveScoreIEnumerator(int score)
 	{
-		print("remove");
 		while (score > 0) {
 			this.score.text = (int.Parse(this.score.text) - 1).ToString();
 			score--;

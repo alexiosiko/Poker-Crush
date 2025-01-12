@@ -31,11 +31,17 @@ public class Board : MonoBehaviour
 	public IEnumerator ClearCreateFallLoop()
 	{
 		if (isClearCreateFallLoopRunning)
+		{
+			print("prevented");
 			yield break; // Prevent s	tarting a new instance if one is already running.
+
+		}
 		Controller.busy = true;
 		isClearCreateFallLoopRunning = true; // Mark as running.
 		multiplier = 1;
-		yield return new WaitForSeconds(Game.TweenDuration + 0.02f);
+		yield return new WaitForSeconds(Game.TweenDuration + Game.TweenBuffer);
+			print("trying");
+		
 		do {
 			loopClearCreateFall = false;
 			yield return CheckAndClearPokerHands();
@@ -75,7 +81,7 @@ public class Board : MonoBehaviour
 				}
 			}
 			if (droppedInARow) {
-				Sound.Singleton.Play("carddrop");
+				Sound.Play("carddrop");
 				yield return new WaitForSeconds(Game.TweenDuration + Game.TweenBuffer);
 			}
 		}
@@ -96,7 +102,7 @@ public class Board : MonoBehaviour
 			}
 			if (hasCardToDropInRow)
 			{
-				Sound.Singleton.Play("carddrop");
+				Sound.Play("carddrop");
 				yield return new WaitForSeconds(Game.TweenDuration + Game.TweenBuffer);
 			}
 		}
@@ -129,7 +135,7 @@ public class Board : MonoBehaviour
 
 			if (cardsToClear.Count > 0) { 
 				
-				Sound.Singleton.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
+				Sound.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
 				yield return new WaitForSeconds(Game.TweenDuration * 2 + Game.TweenBuffer);
 			}
 		}

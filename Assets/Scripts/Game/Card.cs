@@ -1,6 +1,5 @@
 using System.Collections;
 using DG.Tweening;
-using NUnit.Framework;
 using UnityEngine;
 
 public enum Suit {
@@ -8,7 +7,8 @@ public enum Suit {
 	hearts,
 	spades,
 	diamonds,
-	joker
+	joker,
+	bomb,
 }
 public class Card : MonoBehaviour
 {
@@ -19,13 +19,12 @@ public class Card : MonoBehaviour
 		if (isBreaking)
 			return;
 		isBreaking = true;
-		StartCoroutine(BreakIenumeartor());
+		StartCoroutine(BreakIEnumerator());
 	} 
-	protected bool isBreaking = false;
-	IEnumerator BreakIenumeartor()
+	[SerializeField] protected bool isBreaking = false;
+	protected IEnumerator BreakIEnumerator()
 	{
-		transform.DOShakeRotation(0.2f, 20);
-		yield return new WaitForSeconds(Game.TweenDuration);
+		transform.DOShakeRotation(0.5f, 20);
 		transform.DOScale(0, Game.TweenDuration);
 		yield return new WaitForSeconds(Game.TweenDuration);
 		Destroy(gameObject);

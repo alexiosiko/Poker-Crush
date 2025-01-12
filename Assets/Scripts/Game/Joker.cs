@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Joker : Card
+public class Joker : WildCard
 {
-    private static HashSet<Transform> cardsBeingProcessed = new();
     public override void Break()
     {
-        // Prevent processing the same card multiple times
-        if (cardsBeingProcessed.Contains(transform))
-            return;
-
-        cardsBeingProcessed.Add(transform);
+		if (isBreaking)
+			return;
+		isBreaking = true;
 
         HashSet<Transform> cardsToBreak = new();
 
@@ -38,15 +35,8 @@ public class Joker : Card
         }
 
         Effects.Singleton.TextEffect("Joker!", transform.position);
-		Invoke(nameof(Delay), Game.TweenDuration + Game.TweenBuffer);
-        // Remove this card from the processing set after its effects are complete
-        cardsBeingProcessed.Remove(transform);
-
-        base.Break();
-		Sound.Singleton.Play("joker");
+		Sound.Play("joker");
+		base.Break();
     }
-	protected void Delay()
-	{
-        Board.Singleton.StartClearCreateFallLoop();
-	}
+
 }

@@ -2,9 +2,10 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class Sound : MonoBehaviour
 {
-	[SerializeField] AudioClip[] clips;
-	AudioSource source;
-	public void Play(string name)
+	[SerializeField] AudioClip[] instanceClips; // Shown in the Inspector
+    static AudioClip[] clips; // Static field for global access
+	static AudioSource source;
+	public static void Play(string name)
 	{
 		AudioClip c = GetClip(name);
 		if (!c)
@@ -24,7 +25,7 @@ public class Sound : MonoBehaviour
 		source.clip = c;
 		source.Play();
 	}
- 	AudioClip GetClip(string name)
+ 	static AudioClip GetClip(string name)
 	{
 		foreach (AudioClip a in clips)
 			if (a.name == name)
@@ -36,6 +37,8 @@ public class Sound : MonoBehaviour
 	{
 		source = GetComponent<AudioSource>();
 		Singleton = this;
+        clips = instanceClips; // Assign the non-static field to the static field
+
 	}
 	public static Sound Singleton;
 }

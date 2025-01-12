@@ -73,8 +73,9 @@ public class Controller : MonoBehaviour
 		selectedCard = cardTransform;
 		if (busy)
 			return;
-		Card c = cardTransform.GetComponent<Card>();
-		if (c.suit == Suit.joker) {
+		Card c = cardTransform.GetComponent<WildCard>();
+		if (c)
+		{
 			busy = true;
 			c.Break();
 		}
