@@ -38,5 +38,4 @@ public class Joker : WildCard
 		Sound.Play("joker");
 		base.Break();
     }
-
 }

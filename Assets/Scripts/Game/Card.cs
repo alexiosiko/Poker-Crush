@@ -25,8 +25,9 @@ public class Card : MonoBehaviour
 	protected IEnumerator BreakIEnumerator()
 	{
 		transform.DOShakeRotation(0.5f, 20);
-		transform.DOScale(0, Game.TweenDuration);
-		yield return new WaitForSeconds(Game.TweenDuration);
+		yield return new WaitForSeconds(Static.TweenDuration);
+		transform.DOScale(0, Static.TweenDuration);
+		yield return new WaitForSeconds(Static.TweenDuration);
 		Destroy(gameObject);
 	}
 }

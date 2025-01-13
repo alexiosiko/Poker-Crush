@@ -27,20 +27,15 @@ public class Board : MonoBehaviour
 	}
 	bool loopClearCreateFall = false;
 	bool isClearCreateFallLoopRunning = false;
-	public void StartClearCreateFallLoop() => StartCoroutine(ClearCreateFallLoop());
-	public IEnumerator ClearCreateFallLoop()
+	public void StartClearCreateFallLoop(float delay = 0f) => StartCoroutine(ClearCreateFallLoop(delay));
+	public IEnumerator ClearCreateFallLoop(float delay = 0f)
 	{
 		if (isClearCreateFallLoopRunning)
-		{
-			print("prevented");
 			yield break; // Prevent s	tarting a new instance if one is already running.
-
-		}
 		Controller.busy = true;
 		isClearCreateFallLoopRunning = true; // Mark as running.
 		multiplier = 1;
-		yield return new WaitForSeconds(Game.TweenDuration + Game.TweenBuffer);
-			print("trying");
+		yield return new WaitForSeconds(delay);
 		
 		do {
 			loopClearCreateFall = false;
@@ -73,7 +68,7 @@ public class Board : MonoBehaviour
 					if (!below) {
 						loopClearCreateFall = true;
 						droppedInARow = true;
-						current.DOMove(IndexToPos(x, dy), Game.TweenDuration);
+						current.DOMove(IndexToPos(x, dy), Static.TweenDuration);
 
 					}
 					else
@@ -82,7 +77,7 @@ public class Board : MonoBehaviour
 			}
 			if (droppedInARow) {
 				Sound.Play("carddrop");
-				yield return new WaitForSeconds(Game.TweenDuration + Game.TweenBuffer);
+				yield return new WaitForSeconds(Static.TweenDuration + Static.Buffer);
 			}
 		}
 	}
@@ -97,13 +92,13 @@ public class Board : MonoBehaviour
 				if (!current) {
 					hasCardToDropInRow = true;
 					GameObject cardTransform = Instantiate(cards[Random.Range(0, cards.Length)], IndexToPos(x, y + rows + 1), Quaternion.identity, transform);
-					cardTransform.transform.DOMove(IndexToPos(x, y), Game.TweenDuration);
+					cardTransform.transform.DOMove(IndexToPos(x, y), Static.TweenDuration);
 				}
 			}
 			if (hasCardToDropInRow)
 			{
 				Sound.Play("carddrop");
-				yield return new WaitForSeconds(Game.TweenDuration + Game.TweenBuffer);
+				yield return new WaitForSeconds(Static.TweenDuration + Static.Buffer);
 			}
 		}
 	}
@@ -136,7 +131,7 @@ public class Board : MonoBehaviour
 			if (cardsToClear.Count > 0) { 
 				
 				Sound.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
-				yield return new WaitForSeconds(Game.TweenDuration * 2 + Game.TweenBuffer);
+				yield return new WaitForSeconds(Static.TweenDuration * 2 + Static.Buffer);
 			}
 		}
 		if (multiplier > 2)
@@ -157,11 +152,11 @@ public class Board : MonoBehaviour
 
                 // Instantiate the card and set parent
                 GameObject card = Instantiate(cards[Random.Range(0, cards.Length)], new Vector2(-2, -2), Quaternion.identity, transform);
-				card.transform.DOMove(position, Game.TweenDuration);
+				card.transform.DOMove(position, Static.TweenDuration);
 				yield return new WaitForSeconds(0.1f);
             }
         }
-		yield return new WaitForSeconds(Game.TweenBuffer);
+		yield return new WaitForSeconds(Static.Buffer);
 		Controller.busy = false;
     }
 	Vector2 IndexToPos(int x, int y) => new(x * xGap, y * yGap);

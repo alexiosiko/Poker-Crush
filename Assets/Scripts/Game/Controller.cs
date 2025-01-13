@@ -56,9 +56,9 @@ public class Controller : MonoBehaviour
 		busy = true;
 		Vector3 selectedCardPos = selectedCard.position; 
 		Vector3 swapCardPos = swapCard.position;
-		selectedCard.DOMove(swapCardPos, Game.TweenDuration);
+		selectedCard.DOMove(swapCardPos, Static.TweenDuration);
 		selectedCard = null;
-		swapCard.DOMove(selectedCardPos, Game.TweenDuration);
+		swapCard.DOMove(selectedCardPos, Static.TweenDuration);
 		Sound.Singleton.Play(new string[] {"move", "move1"});
 
 		Board.Singleton.StartClearCreateFallLoop();
