@@ -35,7 +35,7 @@ public class Joker : WildCard
         }
 
         Effects.Singleton.TextEffect("Joker!", transform.position);
-		Sound.Play("joker");
+		Sound.Singleton.Play("joker");
 		base.Break();
     }
 }

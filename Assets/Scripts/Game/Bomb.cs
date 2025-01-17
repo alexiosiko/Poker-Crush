@@ -24,10 +24,9 @@ public class Bomb : WildCard
 		}
 		foreach (Transform c in cards)
 		{
-			print(c);
 			c.GetComponent<Card>().Break();
 		}
-		Sound.Play("explosion");
+		Sound.Singleton.Play("explosion", true);
 		base.Break();
 	}
 }

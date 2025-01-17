@@ -59,9 +59,10 @@ public class Controller : MonoBehaviour
 		selectedCard.DOMove(swapCardPos, Static.TweenDuration);
 		selectedCard = null;
 		swapCard.DOMove(selectedCardPos, Static.TweenDuration);
-		Sound.Singleton.Play(new string[] {"move", "move1"});
 
-		Board.Singleton.StartClearCreateFallLoop();
+		Sound.Singleton.Play(new string[] {"move1", "move2", "move3"});
+		Board.Singleton.StartClearCreateFallLoop(Static.TweenDuration);
+		
 		Game.Singleton.RemoveScore(20);
 	}
 

@@ -21,7 +21,7 @@ public class Card : MonoBehaviour
 		isBreaking = true;
 		StartCoroutine(BreakIEnumerator());
 	} 
-	[SerializeField] protected bool isBreaking = false;
+	protected bool isBreaking = false;
 	protected IEnumerator BreakIEnumerator()
 	{
 		transform.DOShakeRotation(0.5f, 20);

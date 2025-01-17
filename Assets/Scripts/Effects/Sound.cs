@@ -1,31 +1,43 @@
 using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(AudioSource))]
 public class Sound : MonoBehaviour
 {
-	[SerializeField] AudioClip[] instanceClips; // Shown in the Inspector
-    static AudioClip[] clips; // Static field for global access
-	static AudioSource source;
-	public static void Play(string name)
+    [SerializeField] AudioClip[] clips; // Static field for global access
+	[SerializeField] AudioSource source1;
+	[SerializeField] AudioSource source2;
+	public void Play(string name, bool secondSource = false)
 	{
 		AudioClip c = GetClip(name);
 		if (!c)
 			return;
-		
-		source.Stop();
-		source.clip = c;
-		source.Play();
+
+
+		AudioSource s;
+		if (secondSource)
+			s = source2;
+		else
+			s = source1;
+		s.Stop();
+		s.clip = c;
+		s.Play();
 	}
-	public void Play(string[] names)
+	public void Play(string[] names, bool secondSource = false)
 	{
 		AudioClip c = GetClip(names[Random.Range(0, names.Length)]);
 		if (!c)
 			return;
 		
-		source.Stop();
-		source.clip = c;
-		source.Play();
+		AudioSource s;
+		if (secondSource)
+			s = source2;
+		else
+			s = source1;
+		s.Stop();
+		s.clip = c;
+		s.Play();
 	}
- 	static AudioClip GetClip(string name)
+ 	AudioClip GetClip(string name)
 	{
 		foreach (AudioClip a in clips)
 			if (a.name == name)
@@ -35,9 +47,8 @@ public class Sound : MonoBehaviour
 	}
 	void Awake()
 	{
-		source = GetComponent<AudioSource>();
+		source1 = GetComponent<AudioSource>();
 		Singleton = this;
-        clips = instanceClips; // Assign the non-static field to the static field
 
 	}
 	public static Sound Singleton;

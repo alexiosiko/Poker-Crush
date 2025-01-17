@@ -8,6 +8,8 @@ public class Board : MonoBehaviour
     public static float xGap = 1f;
     public static float yGap = 1.39f;
     [SerializeField] GameObject[] cards;
+    [SerializeField] GameObject[] jokers;
+    [SerializeField] GameObject[] bombs;
 	readonly public static int rows = 5;
 	readonly public static int cols = 5;
     void Start()
@@ -15,37 +17,36 @@ public class Board : MonoBehaviour
 		Singleton = this;
         StartCoroutine(CreateBoard());
     }
-	void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.C))
-			StartCoroutine(CheckAndClearPokerHands());
-		if (Input.GetKeyDown(KeyCode.F))
-			StartCoroutine(Fall());
-		if (Input.GetKeyDown(KeyCode.V))
-			StartCoroutine(CreateAndFall());
+	// void Update()
+	// {
+	// 	if (Input.GetKeyDown(KeyCode.C))
+	// 		StartCoroutine(CheckAndClearPokerHands());
+	// 	if (Input.GetKeyDown(KeyCode.F))
+	// 		StartCoroutine(FallAtOnce());
+	// 	if (Input.GetKeyDown(KeyCode.V))
+	// 		StartCoroutine(CreateAndFall());
 		
-	}
+	// }
 	bool loopClearCreateFall = false;
 	bool isClearCreateFallLoopRunning = false;
-	public void StartClearCreateFallLoop(float delay = 0f) => StartCoroutine(ClearCreateFallLoop(delay));
-	public IEnumerator ClearCreateFallLoop(float delay = 0f)
+	public void StartClearCreateFallLoop(float delay) => StartCoroutine(ClearCreateFallLoop(delay));
+	public IEnumerator ClearCreateFallLoop(float delay)
 	{
 		if (isClearCreateFallLoopRunning)
-			yield break; // Prevent s	tarting a new instance if one is already running.
-		Controller.busy = true;
+			yield break; // Prevent starting a new instance if one is already running.
 		isClearCreateFallLoopRunning = true; // Mark as running.
+		Controller.busy = true;
 		multiplier = 1;
-		yield return new WaitForSeconds(delay);
-		
+		yield return new WaitForSeconds(delay + Static.Buffer);
+		print("start loop");
 		do {
+			print("Loop");
 			loopClearCreateFall = false;
 			yield return CheckAndClearPokerHands();
-			yield return new WaitForSeconds(0.02f);
 			yield return StartCoroutine(Fall());
-			yield return new WaitForSeconds(0.02f);
 			yield return StartCoroutine(CreateAndFall());
-			yield return new WaitForSeconds(0.02f);
 		} while (loopClearCreateFall);
+		print("done loop");
 
 		Controller.busy = false;
 		isClearCreateFallLoopRunning = false; // Mark as not running.
@@ -53,54 +54,90 @@ public class Board : MonoBehaviour
 	
 	IEnumerator Fall()
 	{
-		for (int y = 1; y < rows; y++)
+		bool droppedSomething = false;
+		for (int x = 0; x < cols; x++)
 		{
-			bool droppedInARow = false;
-			for (int x = 0; x < cols; x++)
+			for (int y = 0; y < rows - 1; y++)
 			{
-				Transform current = GetCardAtIndex(new(x, y));
-				if (!current)
-					continue;
 				
-				for (int dy = y - 1; dy >= 0; dy--)
-				{
-					Transform below = GetCardAtIndex(new(x, dy));
-					if (!below) {
-						loopClearCreateFall = true;
-						droppedInARow = true;
-						current.DOMove(IndexToPos(x, dy), Static.TweenDuration);
+				if (GetCardAtIndex(x, y))
+					continue;
 
-					}
-					else
-						break;
+				for (int aboveY = y + 1; aboveY < rows; aboveY++)
+				{
+
+					Transform topCard = GetCardAtIndex(x, aboveY);
+					if (!topCard)
+						continue;
+					
+					// Disable colider so the next card can fall on its prev position
+					topCard.GetComponent<BoxCollider2D>().enabled = false;
+
+					topCard.DOMove(IndexToPos(x, y), Static.TweenDuration);
+					Sound.Singleton.Play("fall");
+					yield return new WaitForSeconds(0.1f);
+					droppedSomething = true;
+					
+					loopClearCreateFall = true;
+					break;
+
 				}
 			}
-			if (droppedInARow) {
-				Sound.Play("carddrop");
-				yield return new WaitForSeconds(Static.TweenDuration + Static.Buffer);
-			}
 		}
+		yield return EnableAllCardColliders();
+		if (droppedSomething)
+			yield return new WaitForSeconds(Static.TweenDuration + Static.Buffer);
+
+	}
+	IEnumerator EnableAllCardColliders()
+	{
+		foreach (Transform t in transform)
+			t.GetComponent<BoxCollider2D>().enabled = true;
+		
+		yield return null;
 	}
 	IEnumerator CreateAndFall()
 	{
+		bool didSomething = false;
 		for (int y = 0; y < rows; y++)
 		{
-			bool hasCardToDropInRow = false;
 			for (int x = 0; x < cols; x++)
 			{
-				Transform current = GetCardAtIndex(new(x, y));
+				Transform current = GetCardAtIndex(x, y);
 				if (!current) {
-					hasCardToDropInRow = true;
-					GameObject cardTransform = Instantiate(cards[Random.Range(0, cards.Length)], IndexToPos(x, y + rows + 1), Quaternion.identity, transform);
+					didSomething = true;
+					GameObject cardTransform = Instantiate(GetRandomCard(), IndexToPos(x, y + rows + 1), Quaternion.identity, transform);
+					cardTransform.GetComponent<BoxCollider2D>().enabled = false;
 					cardTransform.transform.DOMove(IndexToPos(x, y), Static.TweenDuration);
+
+					yield return new WaitForSeconds(0.1f);
+					Sound.Singleton.Play("fall");
+
+					loopClearCreateFall = true;
 				}
 			}
-			if (hasCardToDropInRow)
-			{
-				Sound.Play("carddrop");
-				yield return new WaitForSeconds(Static.TweenDuration + Static.Buffer);
-			}
 		}
+		yield return EnableAllCardColliders();
+		if (didSomething)
+			yield return new WaitForSeconds(Static.TweenDuration + Static.Buffer + 0.1f);
+	}
+	GameObject GetRandomCard()
+	{
+		// Define rarity weights for each card type
+		float jokerRarity = 0.01f;
+		float bombRarity = 0.01f; 
+
+		// Generate a random value between 0 and 1
+		float randomValue = Random.Range(0f, 1f);
+
+		// Determine card type based on rarity
+		if (randomValue < jokerRarity)
+			return jokers[Random.Range(0, jokers.Length)];
+		else if (randomValue < jokerRarity + bombRarity)
+			return bombs[Random.Range(0, jokers.Length)];
+
+		// Return a random card from the normal deck
+		return cards[Random.Range(0, cards.Length)];
 	}
 	int multiplier = 1;	
 	public IEnumerator CheckAndClearPokerHands()
@@ -112,7 +149,7 @@ public class Board : MonoBehaviour
 			{
 				for (int y = 0; y < rows; y++) 
 				{
-					Transform card = GetCardAtIndex(new(x, y));
+					Transform card = GetCardAtIndex(x, y);
 					if (!card)
 						continue;
 					if (logicFunction.function(card, Vector2.right, cardsToClear))
@@ -129,9 +166,9 @@ public class Board : MonoBehaviour
 				c.GetComponent<Card>().Break();
 
 			if (cardsToClear.Count > 0) { 
-				
-				Sound.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
-				yield return new WaitForSeconds(Static.TweenDuration * 2 + Static.Buffer);
+				loopClearCreateFall = true;
+				Sound.Singleton.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
+				yield return new WaitForSeconds(Static.BreakDuration + Static.Buffer);
 			}
 		}
 		if (multiplier > 2)
@@ -151,8 +188,9 @@ public class Board : MonoBehaviour
                 Vector2 position = IndexToPos(x, y);
 
                 // Instantiate the card and set parent
-                GameObject card = Instantiate(cards[Random.Range(0, cards.Length)], new Vector2(-2, -2), Quaternion.identity, transform);
+                GameObject card = Instantiate(GetRandomCard(), new Vector2(-2, -2), Quaternion.identity, transform);
 				card.transform.DOMove(position, Static.TweenDuration);
+				Sound.Singleton.Play("deal");
 				yield return new WaitForSeconds(0.1f);
             }
         }
@@ -166,10 +204,9 @@ public class Board : MonoBehaviour
 		RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 10, LayerMask.GetMask("Card"));
 		return hit.collider ? hit.collider.transform : null;
 	}
-	public static Transform GetCardAtIndex(Vector2 pos)
+	public static Transform GetCardAtIndex(int x, int y)
 	{
-		pos.x *= xGap;
-		pos.y *= yGap;
+		Vector2 pos = new ((float)x * xGap, (float)y * yGap);
 		RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100, LayerMask.GetMask("Card"));
 		return hit.collider ? hit.collider.transform : null;
 	}

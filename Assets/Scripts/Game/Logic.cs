@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public static class Logic
@@ -81,7 +82,7 @@ public static class Logic
 		cardsToClear.Add(second);
 		cardsToClear.Add(third);
 		Debug.Log($"Three of a kind: {card.GetComponent<Card>().number} {second.GetComponent<Card>().number} {third.GetComponent<Card>().number}");
-		return false;
+		return true;
 	}
 	public static bool GetStraight(Transform card, Vector2 direction, HashSet<Transform> cardsToClear)
 	{
@@ -119,6 +120,23 @@ public static class Logic
 		cardsToClear.Add(fourth);
 		cardsToClear.Add(fifth);
 
+		// Get up from card
+		for (int y = 0; y < Board.rows; y++)
+		{
+			Transform c = Board.GetCardAtIndex(Board.rows / 2, y);
+			if (c)
+				cardsToClear.Add(c);
+		}
+
+		// Get down from card
+		for (int x = 0; x < Board.rows; x++)
+		{
+			Transform c = Board.GetCardAtIndex(x, Board.cols / 2);
+			if (c)
+				cardsToClear.Add(c);
+		}
+
+
 		Debug.Log($"Straight: {numbers[0]} {numbers[1]} {numbers[2]} {numbers[3]} {numbers[4]}");
 		return true;
 	}
@@ -152,6 +170,20 @@ public static class Logic
 		cardsToClear.Add(third);
 		cardsToClear.Add(fourth);
 		cardsToClear.Add(fifth);
+
+		// Get all flush cards
+		for (int x = 0; x < Board.cols; x++)
+		{
+			for (int y = 0; y < Board.rows; y++)
+			{
+				Transform tempC = Board.GetCardAtIndex(x, y);
+				if (!tempC)
+					continue;
+				Card cardScript = tempC.GetComponent<Card>();
+				if (cardScript.suit == suit)
+					cardsToClear.Add(tempC);
+			}
+		}
 
 		Debug.Log($"Flush: {card.GetComponent<Card>().number} {second.GetComponent<Card>().number} {third.GetComponent<Card>().number} {fourth.GetComponent<Card>().number} {fifth.GetComponent<Card>().number}");
 		return true;
@@ -250,7 +282,7 @@ public static class Logic
 		cardsToClear.Add(card);
 		cardsToClear.Add(second);
 		cardsToClear.Add(third);
-		cardsToClear.Add(fourth);
+		cardsToClear.Add(fourth); 
 		cardsToClear.Add(fifth);
 
 		Debug.Log($"Straight Flush: {numbers[0]} {numbers[1]} {numbers[2]} {numbers[3]} {numbers[4]}");

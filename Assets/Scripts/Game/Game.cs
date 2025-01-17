@@ -9,7 +9,6 @@ public class Game : MonoBehaviour
 	readonly int winScore = 1000;
 	[SerializeField] GameObject menuObject;
 	[SerializeField] GameObject winObject;
-	public List<Transform> highlighted;
 	public void AddScore(int score, float delay = 1f) => StartCoroutine(AddScoreIenumerator(score, delay));
 	IEnumerator AddScoreIenumerator(int score, float delay)
 	{
@@ -39,9 +38,9 @@ public class Game : MonoBehaviour
 	public static Game Singleton;
 	void CheckWinCondition()
 	{
-		if (int.Parse(this.score.text) > winScore)
+		if (int.Parse(score.text) > winScore)
 			Win();
-		else if (int.Parse(this.score.text) < 0)
+		else if (int.Parse(score.text) < 0)
 			Lose();
 	}
 	void Win()

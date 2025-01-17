@@ -10,7 +10,8 @@ public class Effects : MonoBehaviour
 	IEnumerator TextEffectCoroutine(string text, Vector2 pos, float delay)
 	{
 		yield return new WaitForSeconds(delay);
-		GameObject obj = Instantiate(textPrefab, new Vector3(pos.x, pos.y, -1), Quaternion.identity);
+		GameObject obj = Instantiate(textPrefab);
+		obj.transform.position = new (obj.transform.position.x, pos.y, obj.transform.position.z);
 		TMP_Text textObj = obj.GetComponentInChildren<TMP_Text>();
 		textObj.text = text;
 		obj.transform.DOScale(1, 1f);
