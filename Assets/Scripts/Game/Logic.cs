@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -86,6 +87,7 @@ public static class Logic
 	}
 	public static bool GetStraight(Transform card, Vector2 direction, HashSet<Transform> cardsToClear)
 	{
+		// Get cards in the specified direction
 		Transform second = Board.GetCardAt((Vector2)card.position + new Vector2(direction.x * Board.xGap * 1, direction.y * Board.yGap * 1));
 		if (!second)
 			return false;
@@ -99,21 +101,34 @@ public static class Logic
 		if (!fifth)
 			return false;
 
+		// Get card numbers
 		int[] numbers = new int[5];
-
-		numbers[0] = card.	GetComponent<Card>().number;
+		numbers[0] = card.GetComponent<Card>().number;
 		numbers[1] = second.GetComponent<Card>().number;
-		numbers[2] = third.	GetComponent<Card>().number;
+		numbers[2] = third.GetComponent<Card>().number;
 		numbers[3] = fourth.GetComponent<Card>().number;
-		numbers[4] = fifth.	GetComponent<Card>().number;
+		numbers[4] = fifth.GetComponent<Card>().number;
 
 		Array.Sort(numbers);
-	
-		 // Check for consecutive differences of 1
-		for (int i = 1; i < numbers.Length; i++)
-			if (numbers[i] - numbers[i - 1] != 1)
-				return false;
 
+		// Handle regular consecutive numbers
+		bool isStraight = true;
+		for (int i = 1; i < numbers.Length; i++)
+		{
+			if (numbers[i] - numbers[i - 1] != 1)
+			{
+				isStraight = false;
+				break;
+			}
+		}
+
+		// Check for "royal straight" (Ace, 10, 11, 12, 13)
+		bool isRoyalStraight = numbers.SequenceEqual(new int[] { 1, 10, 11, 12, 13 });
+
+		if (!isStraight && !isRoyalStraight)
+			return false;
+
+		// Add cards to the set
 		cardsToClear.Add(card);
 		cardsToClear.Add(second);
 		cardsToClear.Add(third);
@@ -136,8 +151,7 @@ public static class Logic
 				cardsToClear.Add(c);
 		}
 
-
-		Debug.Log($"Straight: {numbers[0]} {numbers[1]} {numbers[2]} {numbers[3]} {numbers[4]}");
+		Debug.Log($"Straight: {string.Join(", ", numbers)}");
 		return true;
 	}
 	public static bool GetFlush(Transform card, Vector2 direction, HashSet<Transform> cardsToClear)

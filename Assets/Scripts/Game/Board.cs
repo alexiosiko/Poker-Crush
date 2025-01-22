@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -12,6 +13,14 @@ public class Board : MonoBehaviour
     [SerializeField] GameObject[] bombs;
 	readonly public static int rows = 5;
 	readonly public static int cols = 5;
+	public void ResetBoard()
+	{
+		StopAllCoroutines();
+		foreach (Transform t in transform)
+			Destroy(t.gameObject);
+        StartCoroutine(CreateBoard());
+		
+	}
     void Start()
     {
 		Singleton = this;
@@ -29,98 +38,139 @@ public class Board : MonoBehaviour
 	// }
 	bool loopClearCreateFall = false;
 	bool isClearCreateFallLoopRunning = false;
-	public void StartClearCreateFallLoop(float delay) => StartCoroutine(ClearCreateFallLoop(delay));
-	public IEnumerator ClearCreateFallLoop(float delay)
-	{
-		if (isClearCreateFallLoopRunning)
-			yield break; // Prevent starting a new instance if one is already running.
-		isClearCreateFallLoopRunning = true; // Mark as running.
-		Controller.busy = true;
-		multiplier = 1;
-		yield return new WaitForSeconds(delay + Static.Buffer);
-		print("start loop");
-		do {
-			print("Loop");
-			loopClearCreateFall = false;
-			yield return CheckAndClearPokerHands();
-			yield return StartCoroutine(Fall());
-			yield return StartCoroutine(CreateAndFall());
-		} while (loopClearCreateFall);
-		print("done loop");
+	public async Task ClearCreateFallLoop()
+    {
+        if (isClearCreateFallLoopRunning)
+            return; // Prevent starting a new instance if one is already running.
 
-		Controller.busy = false;
-		isClearCreateFallLoopRunning = false; // Mark as not running.
-	}
-	
-	IEnumerator Fall()
-	{
-		bool droppedSomething = false;
-		for (int x = 0; x < cols; x++)
-		{
-			for (int y = 0; y < rows - 1; y++)
-			{
-				
-				if (GetCardAtIndex(x, y))
-					continue;
+        isClearCreateFallLoopRunning = true; // Mark as running.
+        multiplier = 1;
 
-				for (int aboveY = y + 1; aboveY < rows; aboveY++)
-				{
 
-					Transform topCard = GetCardAtIndex(x, aboveY);
-					if (!topCard)
-						continue;
-					
-					// Disable colider so the next card can fall on its prev position
-					topCard.GetComponent<BoxCollider2D>().enabled = false;
+        do
+        {
+            loopClearCreateFall = false;
 
-					topCard.DOMove(IndexToPos(x, y), Static.TweenDuration);
-					Sound.Singleton.Play("fall");
-					yield return new WaitForSeconds(0.1f);
-					droppedSomething = true;
-					
-					loopClearCreateFall = true;
-					break;
+            // Await CheckAndClearPokerHands, Fall, and CreateAndFall sequentially.
+            await ClearPokerHands();
+            await Fall();
+            await CreateAndFall();
 
-				}
-			}
-		}
-		yield return EnableAllCardColliders();
-		if (droppedSomething)
-			yield return new WaitForSeconds(Static.TweenDuration + Static.Buffer);
+        } while (loopClearCreateFall);
 
-	}
-	IEnumerator EnableAllCardColliders()
-	{
-		foreach (Transform t in transform)
-			t.GetComponent<BoxCollider2D>().enabled = true;
-		
-		yield return null;
-	}
-	IEnumerator CreateAndFall()
-	{
-		bool didSomething = false;
-		for (int y = 0; y < rows; y++)
-		{
-			for (int x = 0; x < cols; x++)
-			{
-				Transform current = GetCardAtIndex(x, y);
-				if (!current) {
-					didSomething = true;
-					GameObject cardTransform = Instantiate(GetRandomCard(), IndexToPos(x, y + rows + 1), Quaternion.identity, transform);
-					cardTransform.GetComponent<BoxCollider2D>().enabled = false;
-					cardTransform.transform.DOMove(IndexToPos(x, y), Static.TweenDuration);
+        isClearCreateFallLoopRunning = false; // Mark as not running.
+    }
 
-					yield return new WaitForSeconds(0.1f);
-					Sound.Singleton.Play("fall");
+    private async Task Fall()
+    {
 
-					loopClearCreateFall = true;
-				}
-			}
-		}
-		yield return EnableAllCardColliders();
-		if (didSomething)
-			yield return new WaitForSeconds(Static.TweenDuration + Static.Buffer + 0.1f);
-	}
+		List<Task> tasks = new();
+        for (int x = 0; x < cols; x++)
+        {
+            for (int y = 0; y < rows - 1; y++)
+            {
+                if (GetCardAtIndex(x, y))
+                    continue;
+
+                for (int aboveY = y + 1; aboveY < rows; aboveY++)
+                {
+                    Transform topCard = GetCardAtIndex(x, aboveY);
+                    if (!topCard)
+                        continue;
+
+                    // Disable collider so the next card can fall on its prev position
+                    topCard.GetComponent<BoxCollider2D>().enabled = false;
+                    tasks.Add(topCard.DOMove(IndexToPos(x, y), Static.TweenDuration).SetUpdate(true).AsyncWaitForCompletion());
+					await Task.Delay(Static.Delay);
+                    Sound.Singleton.Play("fall");
+
+                    loopClearCreateFall = true;
+                    break;
+                }
+            }
+        }
+		await Task.WhenAll(tasks);
+        await EnableAllCardColliders();
+    }
+
+    private async Task EnableAllCardColliders()
+    {
+        foreach (Transform t in transform)
+            t.GetComponent<BoxCollider2D>().enabled = true;
+
+        await Task.Yield(); // Yield control back to the main thread.
+    }
+
+    private async Task CreateAndFall()
+    {
+
+		List<Task> tasks = new();
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                Transform current = GetCardAtIndex(x, y);
+                if (!current)
+                {
+                    GameObject cardTransform = Instantiate(GetRandomCard(), IndexToPos(x, y + rows + 1), Quaternion.identity, transform);
+                    cardTransform.GetComponent<BoxCollider2D>().enabled = false;
+                    tasks.Add(cardTransform.transform.DOMove(IndexToPos(x, y), Static.TweenDuration).SetUpdate(true).AsyncWaitForCompletion());
+
+                    Sound.Singleton.Play("fall");
+
+                    loopClearCreateFall = true;
+					await Task.Delay(Static.Delay);
+                }
+            }
+        }
+		await Task.WhenAll(tasks);
+        await EnableAllCardColliders();
+    }
+
+    private async Task ClearPokerHands()
+    {
+        bool clearedSomething = false;
+
+        foreach (var logicFunction in Logic.logicFunctions)
+        {
+            HashSet<Transform> cardsToClear = new();
+            for (int x = 0; x < cols - 1; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    Transform card = GetCardAtIndex(x, y);
+                    if (!card)
+                        continue;
+
+                    if (logicFunction.function(card, Vector2.right, cardsToClear))
+                    {
+                        Game.Singleton.AddScore(logicFunction.score * multiplier);
+
+                        Effects.Singleton.TextEffect(logicFunction.name, new(card.position.x + logicFunction.centerOffset, card.position.y));
+                    }
+                }
+            }
+
+            List<Task> breakTasks = new();
+            foreach (Transform c in cardsToClear)
+                breakTasks.Add(c.GetComponent<Card>().Break());
+
+            if (cardsToClear.Count > 0)
+            {
+                clearedSomething = true;
+                loopClearCreateFall = true;
+                Sound.Singleton.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
+            }
+            // Wait for all break tasks to complete.
+            await Task.WhenAll(breakTasks);
+
+        }
+
+        if (clearedSomething && multiplier > 1)
+            Effects.Singleton.TextEffect($"{multiplier}X Multi!", new(cols / 2 * xGap, rows / 2 * yGap));
+
+        multiplier++;
+    }
 	GameObject GetRandomCard()
 	{
 		// Define rarity weights for each card type
@@ -140,43 +190,7 @@ public class Board : MonoBehaviour
 		return cards[Random.Range(0, cards.Length)];
 	}
 	int multiplier = 1;	
-	public IEnumerator CheckAndClearPokerHands()
-	{
-		foreach (var logicFunction in Logic.logicFunctions)
-		{
-			HashSet<Transform> cardsToClear = new();
-			for (int x = 0; x < cols - 1; x++)
-			{
-				for (int y = 0; y < rows; y++) 
-				{
-					Transform card = GetCardAtIndex(x, y);
-					if (!card)
-						continue;
-					if (logicFunction.function(card, Vector2.right, cardsToClear))
-					{
-						Game.Singleton.AddScore(logicFunction.score * multiplier);
-
-						
-						Effects.Singleton.TextEffect(logicFunction.name, new (card.position.x + logicFunction.centerOffset, card.position.y));
-
-					}
-				}
-			}
-			foreach (Transform c in cardsToClear)
-				c.GetComponent<Card>().Break();
-
-			if (cardsToClear.Count > 0) { 
-				loopClearCreateFall = true;
-				Sound.Singleton.Play(cardsToClear.Count < 5 ? "smallbreak" : "largebreak");
-				yield return new WaitForSeconds(Static.BreakDuration + Static.Buffer);
-			}
-		}
-		if (multiplier > 2)
-			Effects.Singleton.TextEffect($"{multiplier}X Multi!", new (cols / 2 * xGap, rows / 2 * yGap));
-		// if (hasWaitedTime == false)
-		// 	yield return new WaitForSeconds(Game.TweenDuration);
-		multiplier++;
-	}
+	
     IEnumerator CreateBoard()
     {
 		Controller.busy = true;
@@ -189,7 +203,7 @@ public class Board : MonoBehaviour
 
                 // Instantiate the card and set parent
                 GameObject card = Instantiate(GetRandomCard(), new Vector2(-2, -2), Quaternion.identity, transform);
-				card.transform.DOMove(position, Static.TweenDuration);
+				card.transform.DOMove(position, Static.TweenDuration).SetUpdate(true);
 				Sound.Singleton.Play("deal");
 				yield return new WaitForSeconds(0.1f);
             }

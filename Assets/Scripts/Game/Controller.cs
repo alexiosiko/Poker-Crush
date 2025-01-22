@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -23,7 +24,7 @@ public class Controller : MonoBehaviour
         // if (Input.GetMouseButton(0))
 		// 	Drag();
     }
-	void Release()
+	async void Release()
 	{
 		if (!selectedCard)
 			return;
@@ -54,19 +55,27 @@ public class Controller : MonoBehaviour
 			return;
 
 		busy = true;
-		Vector3 selectedCardPos = selectedCard.position; 
-		Vector3 swapCardPos = swapCard.position;
-		selectedCard.DOMove(swapCardPos, Static.TweenDuration);
-		selectedCard = null;
-		swapCard.DOMove(selectedCardPos, Static.TweenDuration);
 
-		Sound.Singleton.Play(new string[] {"move1", "move2", "move3"});
-		Board.Singleton.StartClearCreateFallLoop(Static.TweenDuration);
-		
+		Vector3 selectedCardPos = selectedCard.position;
+		Vector3 swapCardPos = swapCard.position;
+
+		// Play sound, start loop, and update score after animations complete
 		Game.Singleton.RemoveScore(20);
+		Sound.Singleton.Play(new string[] { "move1", "move2", "move3" });
+		
+		// Start both animations and wait for them to complete
+		Task card1 = selectedCard.DOMove(swapCardPos, Static.TweenDuration).SetUpdate(true).AsyncWaitForCompletion();
+		Task card2 = swapCard.DOMove(selectedCardPos, Static.TweenDuration).SetUpdate(true).AsyncWaitForCompletion();
+		await Task.WhenAll(card1, card2);
+		selectedCard = null;
+
+
+		await Board.Singleton.ClearCreateFallLoop();
+		busy = false;
 	}
 
-	void Click()
+
+	async void Click()
 	{
 		Transform cardTransform = Board.GetCardAtMouse();
 		if (!cardTransform)
@@ -74,90 +83,12 @@ public class Controller : MonoBehaviour
 		selectedCard = cardTransform;
 		if (busy)
 			return;
+		busy = true;
 		Card c = cardTransform.GetComponent<WildCard>();
 		if (c)
-		{
-			busy = true;
-			c.Break();
-		}
-
+			await c.Break();
+		await Board.Singleton.ClearCreateFallLoop();
+		
+		busy = false;
 	}
-	// IEnumerator Release()
-	// {
-	// 	List<Transform> highlighted = Game.Singleton.highlighted;
-	// 	bool score = false;
-	// 	if (highlighted.Count >= 3)
-	// 		score = true;
-
-	// 	foreach (Transform t in highlighted)
-	// 	{
-	// 		t.GetComponent<SpriteRenderer>().color = Color.white;
-	// 		if (score) 
-	// 			t.GetComponent<Card>().Break();
-	// 	}
-	// 	highlighted.Clear();
-
-	// 	yield return new WaitForSeconds(0.2f);
-	// 	yield return StartCoroutine(Board.Singleton.FallAndCreate());
-	// 	busy = false;
-	// }
-	// void Drag()
-	// {
-	// 	RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100, LayerMask.GetMask("Card"));
-	// 	if (!hit.collider)
-	// 		return;
-			
-	// 	Transform cardTransform = hit.collider.transform;
-	// 	List<Transform> highlighted = Game.Singleton.highlighted;
-
-	// 	if (highlighted.Contains(cardTransform))
-	// 		return;
-	// 	if (!CanSelectCard(cardTransform, highlighted))
-	// 		return;
-
-	// 	highlighted.Add(cardTransform);
-	// 	cardTransform.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.5f);
-
-	// }
-
-	// bool CanSelectCard(Transform cardTransform, List<Transform> highlighted)
-	// {
-	// 	if (highlighted.Count == 0)
-	// 		return true;
-
-	// 	if (!isAdjacent(cardTransform, highlighted))
-	// 		return false;
-
-	// 	Card cardOther = cardTransform.GetComponent<Card>();
-	// 	Card cardRecent = highlighted[highlighted.Count - 1].GetComponent<Card>();
-
-	// 	if (Math.Abs(cardOther.cardValue - cardRecent.cardValue) == 1 ||
-	// 		Math.Abs(cardOther.cardValue - cardRecent.cardValue) == 12 ||
-	// 		cardOther.cardValue - cardRecent.cardValue == 0
-	// 	) 
-	// 		return true;
-
-	// 	if (cardOther.suit == cardRecent.suit)
-	// 		return true;
-	// 	return false;
-	// }
-	// bool isAdjacent(Transform cardTransform, List<Transform> highlighted)
-	// {
-	// 	const float epsilon = 0.1f; // Small tolerance value for floating-point comparison
-
-	// 	if (highlighted.Count == 0)
-	// 		return true;
-
-	// 	Transform prevCardTransform = highlighted[highlighted.Count - 1];
-	// 	float dx = prevCardTransform.position.x - cardTransform.position.x;
-	// 	float dy = prevCardTransform.position.y - cardTransform.position.y;
-
-
-	// 	// Use tolerance for comparisons
-	// 	if (Math.Abs(dx) - Board.xGap < epsilon && Math.Abs(dy) < epsilon 
-	// 		|| Math.Abs(dy) - Board.yGap < epsilon && Math.Abs(dx) < epsilon)
-	// 		return true;
-
-	// 	return false;
-	// }
 }

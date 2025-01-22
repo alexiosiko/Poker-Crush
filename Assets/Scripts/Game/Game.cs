@@ -1,13 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class Game : MonoBehaviour
 {
 	[SerializeField] public TMP_Text score;
-	readonly int winScore = 1000;
-	[SerializeField] GameObject menuObject;
+	readonly int winScore = 10000;
+	[SerializeField] GameObject loseObject;
 	[SerializeField] GameObject winObject;
 	public void AddScore(int score, float delay = 1f) => StartCoroutine(AddScoreIenumerator(score, delay));
 	IEnumerator AddScoreIenumerator(int score, float delay)
@@ -46,16 +45,23 @@ public class Game : MonoBehaviour
 	void Win()
 	{
 		winObject.SetActive(true);
-		menuObject.SetActive(false);
+		loseObject.SetActive(false);
 	}
 	void Lose()
 	{
 		winObject.SetActive(false);
-		menuObject.SetActive(true);
+		loseObject.SetActive(true);
 	}
 	void Close()
 	{
 		winObject.SetActive(false);
-		menuObject.SetActive(false);
+		loseObject.SetActive(false);
 	}
+	// public void ResetGame()
+	// {
+	// 	StopAllCoroutines();
+	// 	Close(); 
+	// 	score.text = "200";
+	// 	Board.Singleton.ResetBoard();
+	// }
 }

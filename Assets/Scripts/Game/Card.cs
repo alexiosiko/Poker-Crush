@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -14,22 +15,28 @@ public class Card : MonoBehaviour
 {
 	public short number;
 	public Suit suit;
-	public virtual void Break()
-	{
-		if (isBreaking)
-			return;
-		isBreaking = true;
-		StartCoroutine(BreakIEnumerator());
-	} 
 	protected bool isBreaking = false;
-	protected IEnumerator BreakIEnumerator()
-	{
-		transform.DOShakeRotation(0.5f, 20);
-		yield return new WaitForSeconds(Static.TweenDuration);
-		transform.DOScale(0, Static.TweenDuration);
-		yield return new WaitForSeconds(Static.TweenDuration);
-		Destroy(gameObject);
-	}
+
+	public virtual async Task Break()
+    {
+        if (isBreaking)
+            return;
+        isBreaking = true;
+
+        await BreakAsync(); // Wait for the breaking process to complete.
+    }
+
+    private async Task BreakAsync()
+    {
+        // Shake the rotation	
+        await transform.DOShakeRotation(0.5f, 20).AsyncWaitForCompletion();
+
+        // Optional: Add scaling or additional animations if needed
+        await transform.DOScale(0, Static.TweenDuration).AsyncWaitForCompletion();
+
+        // Destroy the object after animations
+        Destroy(gameObject);
+    }
 }
 
 

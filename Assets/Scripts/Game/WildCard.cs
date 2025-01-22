@@ -1,9 +1,11 @@
 
+using System.Threading.Tasks;
+
 public class WildCard : Card
 {
-	public override void Break() 
+	public override Task Break()
 	{
-		StartCoroutine(BreakIEnumerator());
-		Board.Singleton.StartClearCreateFallLoop(Static.BreakDuration);
+		isBreaking = false;
+		return base.Break();
 	}
 }

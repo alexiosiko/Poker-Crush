@@ -1,15 +1,17 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Bomb : WildCard
 {
-	public override void Break()
+	public override async Task Break()
 	{
 		if (isBreaking)
 			return;
 		isBreaking = true;
 
-		List<Transform> cards = new();
+
+		List<Task> tasks = new();
 		for (int x = -1; x <= 1; x++)
 		{
 			for (int y = -1; y <= 1; y++)
@@ -19,14 +21,16 @@ public class Bomb : WildCard
 				
 				Transform card = Board.GetCardAt(new(transform.position.x + x * Board.xGap, transform.position.y + y * Board.yGap));
 				if (card)
-					cards.Add(card);
+					tasks.Add(card.GetComponent<Card>().Break());
 			}
 		}
-		foreach (Transform c in cards)
-		{
-			c.GetComponent<Card>().Break();
-		}
 		Sound.Singleton.Play("explosion", true);
-		base.Break();
+        Effects.Singleton.TextEffect("Bomb!", transform.position);
+
+		tasks.Add(base.Break());
+		await Task.WhenAll(tasks);
+			
+		Game.Singleton.RemoveScore(20);
+
 	}
 }
