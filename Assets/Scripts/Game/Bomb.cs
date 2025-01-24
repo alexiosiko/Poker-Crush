@@ -24,7 +24,7 @@ public class Bomb : WildCard
 					tasks.Add(card.GetComponent<Card>().Break());
 			}
 		}
-		Sound.Singleton.Play("explosion", true);
+		Sound.Singleton.Play("bomb", true);
         Effects.Singleton.TextEffect("Bomb!", transform.position);
 
 		tasks.Add(base.Break());

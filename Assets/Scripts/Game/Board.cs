@@ -25,7 +25,7 @@ public class Board : MonoBehaviour
     {
 		Singleton = this;
         StartCoroutine(CreateBoard());
-    }
+	}
 	// void Update()
 	// {
 	// 	if (Input.GetKeyDown(KeyCode.C))

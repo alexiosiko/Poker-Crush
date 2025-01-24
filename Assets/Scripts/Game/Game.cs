@@ -57,6 +57,7 @@ public class Game : MonoBehaviour
 		winObject.SetActive(false);
 		loseObject.SetActive(false);
 	}
+	void Start() => Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
 	// public void ResetGame()
 	// {
 	// 	StopAllCoroutines();
