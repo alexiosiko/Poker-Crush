@@ -1,12 +1,9 @@
 using TMPro;
 using UnityEngine;
-
 public class TimeManager : MonoBehaviour
 {
-	public TMP_Text timeText;   // UI Text component to display time
-    private float elapsedTime = 0f; // Time elapsed since the start
-    private int score = 0;          // Player's score
-
+	public TMP_Text timeText;
+    private float elapsedTime = 0f;
     void Update()
     {
         // Increment the elapsed time
@@ -23,8 +20,6 @@ public class TimeManager : MonoBehaviour
 
         timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
-    public void AddScore(int points)
-    {
-        score += points;
-    }
+	public static TimeManager Singleton;
+	void Awake() => Singleton = this;
 }

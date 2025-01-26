@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Scrap.sln"
+    "dotnet.defaultSolution": "Poker Crush.sln"
 }
