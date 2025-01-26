@@ -18,13 +18,13 @@ public class Board : MonoBehaviour
 		StopAllCoroutines();
 		foreach (Transform t in transform)
 			Destroy(t.gameObject);
-        StartCoroutine(CreateBoard());
+        CreateBoard();
 		
 	}
     void Start()
     {
 		Singleton = this;
-        StartCoroutine(CreateBoard());
+        CreateBoard();
 	}
 	// void Update()
 	// {
@@ -114,7 +114,7 @@ public class Board : MonoBehaviour
                 {
                     GameObject cardTransform = Instantiate(GetRandomCard(), IndexToPos(x, y + rows + 1), Quaternion.identity, transform);
                     cardTransform.GetComponent<BoxCollider2D>().enabled = false;
-                    tasks.Add(cardTransform.transform.DOMove(IndexToPos(x, y), Static.TweenDuration).SetUpdate(true).AsyncWaitForCompletion());
+                    tasks.Add(cardTransform.transform.DOMove(IndexToPos(x, y), Static.TweenDuration * 2).SetUpdate(true).AsyncWaitForCompletion());
 
                     Sound.Singleton.Play("fall");
 
@@ -191,26 +191,32 @@ public class Board : MonoBehaviour
 	}
 	int multiplier = 1;	
 	
-    IEnumerator CreateBoard()
+    async void CreateBoard()
     {
 		Controller.busy = true;
+		await PlaceCards();
+		Controller.busy = false;
+    } 
+	async Task PlaceCards()
+	{
+		List<Task> tasks = new();
         for (int x = 0; x < cols; x++)
         {
             for (int y = 0; y < rows; y++)
             {
+
                 // Calculate position for each card
                 Vector2 position = IndexToPos(x, y);
 
                 // Instantiate the card and set parent
                 GameObject card = Instantiate(GetRandomCard(), new Vector2(-2, -2), Quaternion.identity, transform);
-				card.transform.DOMove(position, Static.TweenDuration).SetUpdate(true);
+				tasks.Add(card.transform.DOMove(position, Static.TweenDuration).AsyncWaitForCompletion());
 				Sound.Singleton.Play("deal");
-				yield return new WaitForSeconds(0.1f);
+				await Task.Delay(100);
             }
         }
-		yield return new WaitForSeconds(Static.Buffer);
-		Controller.busy = false;
-    }
+		await Task.WhenAll(tasks);
+	}
 	Vector2 IndexToPos(int x, int y) => new(x * xGap, y * yGap);
 	public static Board Singleton;
 	public static Transform GetCardAtMouse()

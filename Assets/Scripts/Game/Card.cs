@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -16,7 +15,18 @@ public class Card : MonoBehaviour
 	public short number;
 	public Suit suit;
 	protected bool isBreaking = false;
-
+ 	[SerializeField] Sprite face;
+ 	[SerializeField] Sprite back;
+	public async Task Flip(int delayMilliseconds)
+	{
+		await Task.Delay(delayMilliseconds);
+		if (renderer.sprite == back)
+		{
+			await transform.DOScaleX(0, 0.1f).AsyncWaitForCompletion();
+			renderer.sprite = face;
+			await transform.DOScaleX(1, 0.1f).AsyncWaitForCompletion();
+		}
+	}
 	public virtual async Task Break()
     {
         if (isBreaking)
@@ -37,6 +47,16 @@ public class Card : MonoBehaviour
         // Destroy the object after animations
         Destroy(gameObject);
     }
+	new SpriteRenderer renderer;
+	void Start()
+	{
+		// _ = Flip(500);
+	}
+	void Awake()
+	{
+		renderer = GetComponent<SpriteRenderer>();
+		// renderer.sprite = back;
+	}
 }
 
 

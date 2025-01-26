@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4997670275579721366}
   - component: {fileID: 4883306431999097806}
-  - component: {fileID: -9071142382582289652}
   - component: {fileID: -3889365211035015120}
+  - component: {fileID: -9071142382582289652}
   m_Layer: 6
   m_Name: Card 73
   m_TagString: Untagged
@@ -89,6 +89,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-3889365211035015120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16158952566101675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979721b9e05a1e04d962b2acf0f10bd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  number: -1
+  suit: 4
+  face: {fileID: -739704163, guid: 1bc20f5acfa1e0e45912167faa77f53d, type: 3}
+  back: {fileID: 28607642, guid: 8669efe189bfa5d4a80e2d9ea242a4fc, type: 3}
 --- !u!61 &-9071142382582289652
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -135,17 +151,3 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.68, y: 1}
   m_EdgeRadius: 0
---- !u!114 &-3889365211035015120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 16158952566101675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 979721b9e05a1e04d962b2acf0f10bd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  number: -1
-  suit: 4
