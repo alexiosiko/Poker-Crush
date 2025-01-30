@@ -60,7 +60,7 @@ public class Controller : MonoBehaviour
 		Vector3 swapCardPos = swapCard.position;
 
 		// Play sound, start loop, and update score after animations complete
-		Game.Singleton.RemoveScore(20);
+		Score.Singleton.RemoveScore(20);
 		Sound.Singleton.Play(new string[] { "move1", "move2", "move3" });
 		
 		// Start both animations and wait for them to complete

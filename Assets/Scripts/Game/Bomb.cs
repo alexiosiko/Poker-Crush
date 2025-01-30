@@ -30,7 +30,7 @@ public class Bomb : WildCard
 		tasks.Add(base.Break());
 		await Task.WhenAll(tasks);
 			
-		Game.Singleton.RemoveScore(20);
+		Score.Singleton.RemoveScore(20);
 
 	}
 }

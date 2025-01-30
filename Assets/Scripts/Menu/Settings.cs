@@ -20,7 +20,6 @@ public class Settings : MonoBehaviour
 	{
 		homeObject.SetActive(false);
 	}
-	[SerializeField] float musicLevel = -1f;
 	public void OnMusicToggle()
 	{
 		if (GameObject.Find("Music Toggle").GetComponent<Toggle>().isOn)

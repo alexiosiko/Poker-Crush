@@ -144,10 +144,10 @@ public class Board : MonoBehaviour
 
                     if (logicFunction.function(card, Vector2.right, cardsToClear))
                     {
-                        Game.Singleton.AddScore(logicFunction.score * multiplier);
-
-                        Effects.Singleton.TextEffect(logicFunction.name, new(card.position.x + logicFunction.centerOffset, card.position.y));
-                    }
+                        // Game.Singleton.AddScore(logicFunction.score * multiplier);	
+						int score = logicFunction.score * multiplier;
+                        Effects.Singleton.TextEffect(logicFunction.name, new(card.position.x + logicFunction.centerOffset, card.position.y), 0, score);
+                    } 
                 }
             }
 

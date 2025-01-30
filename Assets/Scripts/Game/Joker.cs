@@ -32,7 +32,7 @@ public class Joker : WildCard
 
         Effects.Singleton.TextEffect("Joker!", transform.position);
 		Sound.Singleton.Play("joker");
-		Game.Singleton.RemoveScore(20);
+		Score.Singleton.RemoveScore(20);
 		
 		await Task.WhenAll(tasks);
     }
