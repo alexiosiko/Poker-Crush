@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: -4998455143283755344, guid: 513df9fc6adcf0b4ca5323d27c4ad058, type: 3}
     - target: {fileID: 5424925888971933674, guid: 634fef57e533abc4bae4ec37c51e8538, type: 3}
       propertyPath: m_Name
-      value: d2 1
+      value: zjoker
       objectReference: {fileID: 0}
     - target: {fileID: 6305013539598955408, guid: 634fef57e533abc4bae4ec37c51e8538, type: 3}
       propertyPath: m_LocalPosition.x
@@ -64,8 +64,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8514344233836620079, guid: 634fef57e533abc4bae4ec37c51e8538, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5424925888971933674, guid: 634fef57e533abc4bae4ec37c51e8538, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7426266969983130923}
   m_SourcePrefab: {fileID: 100100000, guid: 634fef57e533abc4bae4ec37c51e8538, type: 3}
+--- !u!1 &7810745199116759831 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5424925888971933674, guid: 634fef57e533abc4bae4ec37c51e8538, type: 3}
+  m_PrefabInstance: {fileID: 2822739070395823357}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7426266969983130923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7810745199116759831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979721b9e05a1e04d962b2acf0f10bd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  number: -2
+  suit: 4

@@ -2,7 +2,6 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections;
 using TMPro;
-using Microsoft.Unity.VisualStudio.Editor;
 
 public class Effects : MonoBehaviour
 {
@@ -37,7 +36,6 @@ public class Effects : MonoBehaviour
 		obj.GetComponentInChildren<TMP_Text>().text = score.ToString();
 		obj.transform.DOScaleY(1, 0.1f);
 		yield return new WaitForSeconds(0.5f);
-		print(Score.Singleton.GetComponent<RectTransform>().position);
 		obj.transform.DOMove(Score.Singleton.GetComponent<RectTransform>().position, 0.4f).SetUpdate(true);
 		obj.transform.GetComponent<TMP_Text>().DOFade(0, 0.4f);
 		yield return new WaitForSeconds(0.2f);

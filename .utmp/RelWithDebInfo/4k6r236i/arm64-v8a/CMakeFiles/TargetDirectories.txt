@@ -1,0 +1,5 @@
+C:/Users/alexi/Documents/unity/Poker Crush/.utmp/RelWithDebInfo/4k6r236i/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/alexi/Documents/unity/Poker Crush/.utmp/RelWithDebInfo/4k6r236i/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/alexi/Documents/unity/Poker Crush/.utmp/RelWithDebInfo/4k6r236i/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/Users/alexi/Documents/unity/Poker Crush/.utmp/RelWithDebInfo/4k6r236i/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/alexi/Documents/unity/Poker Crush/.utmp/RelWithDebInfo/4k6r236i/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir

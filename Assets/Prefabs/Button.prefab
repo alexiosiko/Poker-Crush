@@ -60,14 +60,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}
+  m_Color: {r: 0.296032, g: 0.5849056, b: 0.1738163, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 5166245034304986929, guid: a229a9b81407b524186659fe62e2823f, type: 3}
+  m_Sprite: {fileID: 963792172, guid: 433a6ea624d0b984e90b881a60af4496, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -155,8 +155,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -6}
-  m_SizeDelta: {x: -50.8656, y: -40.3979}
+  m_AnchoredPosition: {x: 0, y: 5.6837}
+  m_SizeDelta: {x: -69.4417, y: -24.0571}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &174820136246965658
 CanvasRenderer:
@@ -188,8 +188,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Quit
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 84f46682a7431ed4aa609d3e14a9d523, type: 2}
-  m_sharedMaterial: {fileID: -5210151218263091846, guid: 84f46682a7431ed4aa609d3e14a9d523, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 52294220cdbb3ca4495622e4a844c158, type: 2}
+  m_sharedMaterial: {fileID: -6336832838678894327, guid: 52294220cdbb3ca4495622e4a844c158, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 119.2
+  m_fontSize: 80.15
   m_fontSizeBase: 90
   m_fontWeight: 400
   m_enableAutoSizing: 1

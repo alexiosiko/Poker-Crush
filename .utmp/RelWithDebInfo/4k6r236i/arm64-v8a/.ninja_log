@@ -1,0 +1,10 @@
+# ninja log v5
+6	1771	7601781577958522	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	9dc9ab501667153
+17	1784	7601781577772873	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	9091a1261821a1f
+37	1835	7601781578548844	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	33d2e0d7491a964f
+23	1895	7601781579151373	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	deb35b41e97db594
+45	1935	7601781579535830	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	65fc50da58314089
+0	2062	7601781580885239	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	5677ea1e65a6281a
+30	2266	7601781582934645	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	9aa14d347255c0e6
+11	2528	7601781585694103	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	be8204d412ef62c0
+2528	2713	7601781587594292	C:/Users/alexi/Documents/unity/Poker Crush/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/4k6r236i/obj/arm64-v8a/libgame.so	f010f39fedd2f4e
