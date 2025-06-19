@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 358ef756f3f0a4d48bdb8bae94e6b67a
+guid: 94fa015ffbb85e54eb75ab0bb0834a95
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Boogaloo
+  - Sour Gummy
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

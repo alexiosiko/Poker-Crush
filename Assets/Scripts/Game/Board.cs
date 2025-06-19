@@ -11,8 +11,8 @@ public class Board : MonoBehaviour
     [SerializeField] GameObject[] cards;
     [SerializeField] GameObject[] jokers;
     [SerializeField] GameObject[] bombs;
-	readonly public static int rows = 5;
-	readonly public static int cols = 5;
+	public static int rows = 6;
+	public static int cols = 10;
 	public void ResetBoard()
 	{
 		StopAllCoroutines();

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 893cb208871dab94488cb988920f0ebd
+guid: c63452dd912fe4c46909c1c5ce844e69
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
@@ -14,5 +14,5 @@ AssetOrigin:
   productId: 254358
   packageName: Hot Reload | Edit Code Without Compiling
   packageVersion: 1.13.7
-  assetPath: Packages/com.singularitygroup.hotreload/Editor/Window/GUI/IGUIComponent.cs
+  assetPath: Packages/com.singularitygroup.hotreload/Editor/HotReloadAttributeProcessor.cs
   uploadId: 752503
