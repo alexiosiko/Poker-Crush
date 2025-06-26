@@ -14,10 +14,12 @@ public class Settings : MonoBehaviour
 	}
 	void Open()
 	{
+		Controller.menuBusy = true;
 		homeObject.SetActive(true);
 	}
 	void Close()
 	{
+		Controller.menuBusy = false;
 		homeObject.SetActive(false);
 	}
 	public void OnMusicToggle()
