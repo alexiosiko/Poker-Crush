@@ -18,6 +18,10 @@ public class Game : MonoBehaviour
 		else if (int.Parse(score.text) < 0)
 			Lose();
 	}
+	void Start()
+	{
+		Controller.menuBusy = false;	
+	}
 	void Win()
 	{
 		winObject.SetActive(true);
